@@ -1,62 +1,63 @@
 <?php
 
+// core/http/Router.php
 namespace core\http;
 
-use core\support\View;
+use core\pulse\View;
 
 class Router
 {
-    protected array $routes = [];
+    protected static array $routes = [];
 
-    public function get(string $path, callable $action): void
+    public static function get(string $uri, callable|array $action): void
     {
-        $this->addRoute('GET', $path, $action);
+        self::addRoute('GET', $uri, $action);
     }
 
-    public function post(string $path, callable $action): void
+    public static function post(string $uri, callable|array $action): void
     {
-        $this->addRoute('POST', $path, $action);
+        self::addRoute('POST', $uri, $action);
     }
 
-    public function addRoute(string $method, string $path, callable $action): void
+    protected static function addRoute(string $method, string $uri, callable|array $action): void
     {
-        $this->routes[$method][$path] = $action;
+        self::$routes[$method][$uri] = $action;
     }
-
 
     public function dispatch(): void
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
-
         if ($uri !== '/' && str_ends_with($uri, '/')) {
             $uri = rtrim($uri, '/');
         }
 
-        $action = $this->routes[$method][$uri] ?? null;
+        $action = self::$routes[$method][$uri] ?? null;
 
-        if (is_callable($action)) {
-            try {
-                $action();
-            } catch (\Throwable $e) {
-                http_response_code(500);
-                \core\Support\ErrorHandler::handleException($e);
-            }
-        } else {
+        if (!$action) {
             http_response_code(404);
             View::error('404');
+            return;
+        }
+
+        try {
+            $request = new Request();
+            $response = new Response();
+
+            if (is_array($action)) {
+                [$controller, $method] = $action;
+                (new $controller)->$method($request, $response);
+            } else {
+                $action($request, $response);
+            }
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            \core\Support\ErrorHandler::handleException($e);
         }
     }
 
     public function loadRoutes(): void
     {
-        $path = base_path('resources/routes/app.php');
-        if (!file_exists($path)) {
-            echo "[!] Route file not found: $path\n";
-            return;
-        }
-
-        $router = $this;
-        require $path;
+        require base_path('resources/routes/app.php');
     }
 }

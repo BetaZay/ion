@@ -1,16 +1,11 @@
 <?php
 
-use core\http\router;
+use core\http\Router as Route;
 
-/** @var Router $router */
-
-$router->get('/', function () {
-    \core\support\View::render('welcome');
+Route::get('/',  function () {
+    \core\pulse\View::render('welcome');
 });
 
-$router->get('/status', function () {
-    echo "app is alive.";
-});
-
+Route::get('/status', fn($req, $res) => $res->send('app is alive'));
 // You can include more route files like this:
 //require_once __DIR__ . '/api.php';

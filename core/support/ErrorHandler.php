@@ -2,12 +2,15 @@
 
 namespace core\support;
 
+use core\pulse\View;
+
 class ErrorHandler
 {
     public static function register(): void
     {
         set_exception_handler([self::class, 'handleException']);
         set_error_handler([self::class, 'handleError']);
+        set_exception_handler(fn($e) => var_dump($e));
     }
 
     public static function handleException(\Throwable $e): void
