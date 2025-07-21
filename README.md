@@ -141,7 +141,19 @@ Clone the repository or generate a project.
 Run a PHP server:
 
 ```
-php -S localhost:8000 -t public
+php spark serve args: --port={port} --host={host ip}
+```
+
+Run vite:
+
+```
+npm run dev
+```
+
+Build vite:
+
+```
+npm run build
 ```
 
 Edit routes in `resources/routes/web.php`.
