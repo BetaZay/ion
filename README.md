@@ -138,6 +138,13 @@ ion/
 
 Clone the repository or generate a project.
 
+Run composer and & npm install:
+
+```
+composer install
+npm install
+```
+
 Run a PHP server:
 
 ```
@@ -156,7 +163,7 @@ Build vite:
 npm run build
 ```
 
-Edit routes in `resources/routes/web.php`.
+Edit routes in `resources/routes/app.php`.
 
 Edit views in `resources/views/`.
 
