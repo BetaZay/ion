@@ -1,6 +1,6 @@
 <?php
 
-namespace core\Bootstrap;
+namespace core\bootstrap;
 
 use core\database\Database;
 use core\http\Kernel;

@@ -79,6 +79,7 @@ class View
                 '/@endforeach/'          => fn()   => "<?php endforeach; ?>",
                 '/@php/'                 => fn()   => "<?php ",
                 '/@endphp/'              => fn()   => " ?>",
+                '/@vite\s*\((.+?)\)/' => fn($m) => "<?php vite({$m[1]}); ?>",
             ];
 
             foreach ($directives as $pattern => $callback) {

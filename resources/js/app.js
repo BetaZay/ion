@@ -1,0 +1,1 @@
+console.log('Ion + Vite is working');

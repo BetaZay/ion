@@ -5,7 +5,7 @@ namespace core\bootstrap;
 use core\contracts\ConsoleCommand;
 
 /**
- * console Kernel for handling command registration and execution.
+ * Console Kernel for handling command registration and execution.
  */
 class ConsoleKernel
 {

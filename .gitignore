@@ -1,4 +1,5 @@
 /node_modules
+/public/build
 /vendor
 .env
 .env.backup
@@ -10,5 +11,4 @@ yarn-error.log
 /.idea
 /.nova
 /.vscode
-/.zed
-/composer.phar
+/.zedsc
