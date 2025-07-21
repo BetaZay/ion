@@ -23,7 +23,7 @@ function vite(array $assets): void
 {
     $isDev = \core\support\Env::get('APP_ENV') === 'local';
     $viteUrl = 'http://localhost:5173';
-    $manifestPath = base_path('public/build/manifest.json');
+    $manifestPath = base_path('public/build/.vite/manifest.json');
 
     if ($isDev) {
         // Inject the Vite client for HMR
@@ -43,22 +43,31 @@ function vite(array $assets): void
             }
         } else {
             static $manifest = null;
-            if ($manifest === null && file_exists($manifestPath)) {
-                $manifest = json_decode(file_get_contents($manifestPath), true);
+
+            if ($manifest === null) {
+                if (file_exists($manifestPath)) {
+                    $manifest = json_decode(file_get_contents($manifestPath), true);
+                } else {
+                    $manifest = [];
+                }
             }
 
-            if (isset($manifest[$key])) {
-                $entry = $manifest[$key];
+            $resolved = $manifest[$key] ?? null;
 
-                if (!empty($entry['file'])) {
-                    echo "<script type=\"module\" src=\"/build/{$entry['file']}\"></script>" . PHP_EOL;
+            if ($resolved) {
+
+                if (!empty($resolved['file'])) {
+                    echo "<script type=\"module\" src=\"/build/{$resolved['file']}\"></script>" . PHP_EOL;
                 }
 
-                if (!empty($entry['css'])) {
-                    foreach ($entry['css'] as $css) {
+                if (!empty($resolved['css'])) {
+                    foreach ($resolved['css'] as $css) {
                         echo "<link rel=\"stylesheet\" href=\"/build/{$css}\">" . PHP_EOL;
                     }
                 }
+            } else {
+                \core\logging\Logger::warning("Vite asset key not found in manifest: '{$key}'");
+                \core\logging\Logger::debug("Available keys: " . implode(', ', array_keys($manifest ?? [])));
             }
         }
     }

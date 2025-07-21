@@ -24,8 +24,8 @@ export default ({ mode }) => {
             emptyOutDir: true,
             rollupOptions: {
                 input: {
-                    app: path.resolve('resources/js/app.js'),
-                    style: path.resolve('resources/css/app.css'),
+                    'app': path.resolve('resources/js/app.js'),
+                    'app-css': path.resolve('resources/css/app.css'),
                 },
                 output: {
                     entryFileNames: 'js/[name].js',
