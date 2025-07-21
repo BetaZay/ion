@@ -3,6 +3,7 @@ import liveReload from 'vite-plugin-live-reload';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
+import tailwindcss from '@tailwindcss/vite'
 
 export default ({ mode }) => {
     Object.assign(process.env, dotenv.parse(fs.readFileSync(path.resolve('.env'))));
@@ -14,6 +15,7 @@ export default ({ mode }) => {
         root: 'resources',
         base: process.env.NODE_ENV === 'production' ? '/build/' : '/',
         plugins: [
+            tailwindcss(),
             liveReload([
                 '../resources/views/**/*.pulse.php',
             ]),
