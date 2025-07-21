@@ -56,34 +56,40 @@ class View
         }
 
         // Compile & cache
-        $hash   = md5($file);
-        $cached = base_path("storage/views/{$hash}.php");
+        $hash = sha1(realpath($file) . ':' . filemtime($file));
+        $cached = (getenv('ION_CACHE_PATH') ?: base_path("storage/views")) . "/{$hash}.php";
 
         if (!file_exists($cached) || filemtime($cached) < filemtime($file)) {
             $content = file_get_contents($file);
 
-            // Replace {{ ... }} with htmlentities echo
-            $content = preg_replace_callback(
-                '/{{\s*(.+?)\s*}}/',
-                fn($m) => "<?php echo htmlentities({$m[1]}); ?>",
-                $content
-            );
+            $isTemplate = str_contains($content, '{{') || str_contains($content, '@');
 
-            // Directives
-            $directives = [
-                '/@if\s*\((.+?)\)/'      => fn($m) => "<?php if ({$m[1]}): ?>",
-                '/@elseif\s*\((.+?)\)/'  => fn($m) => "<?php elseif ({$m[1]}): ?>",
-                '/@else/'                => fn()   => "<?php else: ?>",
-                '/@endif/'               => fn()   => "<?php endif; ?>",
-                '/@foreach\s*\((.+?)\)/' => fn($m) => "<?php foreach ({$m[1]}): ?>",
-                '/@endforeach/'          => fn()   => "<?php endforeach; ?>",
-                '/@php/'                 => fn()   => "<?php ",
-                '/@endphp/'              => fn()   => " ?>",
-                '/@vite\s*\((.+?)\)/' => fn($m) => "<?php vite({$m[1]}); ?>",
-            ];
+            if ($isTemplate) {
+                // Replace {{ ... }} with htmlentities echo
+                $content = preg_replace_callback(
+                    '/{{\s*(.+?)\s*}}/',
+                    fn($m) => "<?php echo htmlentities({$m[1]}); ?>",
+                    $content
+                );
 
-            foreach ($directives as $pattern => $callback) {
-                $content = preg_replace_callback($pattern, $callback, $content);
+                $directives = [
+                    '/@if\s*\((.+?)\)/'      => fn($m) => "<?php if ({$m[1]}): ?>",
+                    '/@elseif\s*\((.+?)\)/'  => fn($m) => "<?php elseif ({$m[1]}): ?>",
+                    '/@else/'                => fn()   => "<?php else: ?>",
+                    '/@endif/'               => fn()   => "<?php endif; ?>",
+                    '/@foreach\s*\((.+?)\)/' => fn($m) => "<?php foreach ({$m[1]}): ?>",
+                    '/@endforeach/'          => fn()   => "<?php endforeach; ?>",
+                    '/@php/'                 => fn()   => "<?php ",
+                    '/@endphp/'              => fn()   => " ?>",
+                    '/@vite\s*\((.+?)\)/'    => fn($m) => "<?php vite({$m[1]}); ?>",
+                ];
+
+                foreach ($directives as $pattern => $callback) {
+                    $content = preg_replace_callback($pattern, $callback, $content);
+                }
+            } else {
+                // Wrap plain text content in a safe echo
+                $content = "<?php echo " . var_export($content, true) . "; ?>";
             }
 
             file_put_contents($cached, $content);
