@@ -13,7 +13,7 @@
 
 require_once __DIR__ . '/../autoload.php';
 
-use core\Bootstrap\App;
+use core\bootstrap\App;
 
 /**
  * Initialize the application

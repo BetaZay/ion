@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use core\Bootstrap\ConsoleKernel;
+use core\bootstrap\ConsoleKernel;
 
 require_once __DIR__ . '/autoload.php';
 

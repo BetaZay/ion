@@ -51,23 +51,30 @@ require_once __DIR__ . '/core/support/Helpers.php';
  * Load environment configuration
  */
 require_once __DIR__ . '/core/support/Env.php';;
-\core\Support\Env::load(__DIR__ . '/.env');
+\core\support\Env::load(__DIR__ . '/.env');
 
 
-require_once __DIR__ . '/core/support/ErrorHandler.php';
-\core\Support\ErrorHandler::register();
-
+if (php_sapi_name() === 'cli') {
+    set_exception_handler(function ($e) {
+        fwrite(STDERR, "[Exception] " . $e->getMessage() . "\n");
+        fwrite(STDERR, "In " . $e->getFile() . " on line " . $e->getLine() . "\n");
+        exit(1);
+    });
+} else {
+    require_once __DIR__ . '/core/support/ErrorHandler.php';
+    \core\support\ErrorHandler::register();
+}
 
 /**
  * Initialize logging system
  */
 require_once __DIR__ . '/core/logging/Logger.php';;
-\core\Logging\Logger::init();
+\core\logging\Logger::init();
 
 if (!file_exists(__DIR__ . '/.env')) {
-    \core\Logging\Logger::warning('.env file not found — using defaults');
+    \core\logging\Logger::warning('.env file not found — using defaults');
 } else {
-    \core\Logging\Logger::debug('.env loaded successfully');
+    \core\logging\Logger::debug('.env loaded successfully');
 }
 
 /**
@@ -77,10 +84,10 @@ if (!file_exists(__DIR__ . '/.env')) {
  */
 require_once __DIR__ . '/core/database/Database.php';;
 $config = require __DIR__ . '/config/database.php';
-\core\Database\Database::connect($config);
+\core\database\Database::connect($config);
 
 /**
  * Run initial application setup procedures
  */
 require_once __DIR__ . '/core/bootstrap/Setup.php';
-\core\Bootstrap\Setup::run();
+\core\bootstrap\Setup::run();

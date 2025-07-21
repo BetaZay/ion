@@ -55,9 +55,9 @@ Access via `Env::get('KEY')`.
 
 Used for toggles like debug mode (`APP_DEBUG=true`).
 
-# Console Commands (Forge)
+# Console Commands (Spark)
 
-Ion includes a CLI system called Forge, accessible via `./forge.php`.
+Ion includes a CLI system called Spark, accessible via `./spark.php`.
 
 Automatically loads and registers commands from:
 
@@ -69,7 +69,7 @@ Supports arguments and flags.
 Built-in command listing via:
 
 ```bash
-php forge.php list
+php spark list
 ```
 
 Example command structure:
@@ -89,31 +89,41 @@ class Hello implements ConsoleCommand {
 Registered commands are executed like so:
 
 ```bash
-php forge.php hello
+php spark hello
 ```
 
 ### Directory Structure
 
 ```
-project-root/
-├── Core/                 # Framework internals
-│   ├── Console/
-│   ├── Controllers/
-│   ├── Http/
-│   ├── Models/
-│   └── Support/
-├── App/                  # User application (models, commands, etc.)
-├── Config/               # Configuration files
+ion/
+├── core/                 # Framework internals
+│   ├── bootstrap/
+│   ├── console/
+│   ├── contracts/
+│   ├── database/
+│   ├── http/
+│   ├── logging/
+│   ├── middleware/
+│   ├── models/
+│   ├── support/
+│   └── views/
+├── app/                  # User application (models, commands, etc.)
+├── config/               # Configuration files
 │   ├── app.php
 │   └── database.php
-├── Database/             # Migrations and seeders
-├── Public/               # Entry point (index.php) and public assets
-├── Resources/            # Views, routes, UI components
-│   ├── Views/
-│   └── Routes/
-├── Storage/              # Logs, compiled views, runtime data
-├── autoload.php          # Custom PSR-4 autoloader
-├── forge.php             # Application bootstrap
+├── database/             # Migrations and seeders
+│   ├── migrations/
+│   └── seeders/
+├── public/               # Entry point (index.php) and public assets
+│   ├── index.php
+├── resources/            # Views, routes, UI components
+│   ├── css/
+│   ├── js/
+│   ├── routes/
+│   └── views/
+├── storage/              # Logs, compiled views, runtime data
+├── autoload.php          # PSR-4 autoloader
+├── spark.php             # CLI
 └── .env                  # Environment variables
 ```
 
@@ -131,7 +141,7 @@ Clone the repository or generate a project.
 Run a PHP server:
 
 ```
-php -S localhost:8000 -t Public
+php -S localhost:8000 -t public
 ```
 
 Edit routes in `resources/routes/web.php`.

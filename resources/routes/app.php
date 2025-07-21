@@ -5,7 +5,7 @@ use core\http\router;
 /** @var Router $router */
 
 $router->get('/', function () {
-    \core\Support\View::render('welcome');
+    \core\support\View::render('welcome');
 });
 
 $router->get('/status', function () {
